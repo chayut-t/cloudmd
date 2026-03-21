@@ -44,6 +44,28 @@ export function EditorClient({
   const isDirty = useMemo(() => {
     return title !== lastSavedRef.current.title || content !== lastSavedRef.current.content;
   }, [title, content]);
+  const hasRangeSelection =
+    selection !== null && selection.start !== selection.end;
+
+  const saveStatusLabel =
+    saveStatus === "saving"
+      ? "Saving"
+      : saveStatus === "saved"
+        ? "Saved"
+        : saveStatus === "error"
+          ? "Save issue"
+          : isDirty
+            ? "Unsaved"
+            : "Ready";
+
+  const saveStatusClassName =
+    saveStatus === "saving"
+      ? "status-pill status-pill-saving"
+      : saveStatus === "saved"
+        ? "status-pill status-pill-saved"
+        : saveStatus === "error"
+          ? "status-pill status-pill-error"
+          : "status-pill status-pill-neutral";
 
   useEffect(() => {
     if (!canEditDocument) {
@@ -139,81 +161,121 @@ export function EditorClient({
   }
 
   return (
-    <section className="card stack-md">
-      <div className="row gap-sm wrap">
-        <input
-          type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          disabled={!canEditDocument}
-          maxLength={120}
-          className="title-input"
-        />
-        <button
-          type="button"
-          onClick={createSnapshot}
-          className="button subtle"
-          disabled={!canEditDocument}
-        >
-          Create Snapshot
-        </button>
-        <p className="muted small">Status: {saveStatus}</p>
-      </div>
+    <section className="editor-workspace">
+      <div className="editor-surface">
+        <div className="editor-header">
+          <div className="editor-heading">
+            <p className="eyebrow">Markdown document</p>
+            <input
+              type="text"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              disabled={!canEditDocument}
+              maxLength={120}
+              className="editor-title-input"
+            />
+          </div>
 
-      <textarea
-        className="editor"
-        value={content}
-        readOnly={!canEditDocument}
-        onChange={(event) => setContent(event.target.value)}
-        onSelect={(event) => {
-          const element = event.currentTarget;
-          setSelection({
-            start: element.selectionStart,
-            end: element.selectionEnd
-          });
-        }}
-      />
+          <div className="editor-header-actions">
+            <span className={saveStatusClassName}>{saveStatusLabel}</span>
+            <span className="status-pill status-pill-neutral">
+              {canEditDocument ? "Editor" : "Viewer"}
+            </span>
+            <button
+              type="button"
+              onClick={createSnapshot}
+              className="button button-secondary"
+              disabled={!canEditDocument}
+            >
+              Create Snapshot
+            </button>
+          </div>
+        </div>
 
-      <form onSubmit={handleCommentSubmit} className="stack-sm">
-        <label htmlFor="comment" className="small">
-          Add comment
-          {selection
-            ? ` (range ${selection.start}-${selection.end})`
-            : " (no range selected)"}
-        </label>
+        <div className="editor-toolbar">
+          <div className="toolbar-pills">
+            <span className="toolbar-pill">Focused writing</span>
+            <span className="toolbar-pill">Autosave</span>
+            <span className="toolbar-pill">Markdown</span>
+          </div>
+          <p className="editor-toolbar-copy">
+            {canEditDocument
+              ? "Changes save automatically while you type."
+              : "You have read-only access to this document workspace."}
+          </p>
+        </div>
+
         <textarea
-          id="comment"
-          value={commentBody}
-          onChange={(event) => setCommentBody(event.target.value)}
-          rows={3}
-          maxLength={1000}
+          className="editor-canvas"
+          value={content}
+          readOnly={!canEditDocument}
+          onChange={(event) => setContent(event.target.value)}
+          onSelect={(event) => {
+            const element = event.currentTarget;
+            setSelection({
+              start: element.selectionStart,
+              end: element.selectionEnd
+            });
+          }}
         />
-        <button className="button" type="submit" disabled={!canComment}>
-          Post Comment
-        </button>
-      </form>
-
-      <div>
-        <h2>Comments</h2>
-        <ul className="list compact">
-          {comments.length === 0 ? (
-            <li className="muted">No comments yet.</li>
-          ) : (
-            comments.map((comment) => (
-              <li key={comment.id}>
-                <p>{comment.body}</p>
-                <p className="muted small">
-                  {comment.authorName ?? comment.authorEmail} ·
-                  {` ${new Date(comment.createdAt).toLocaleString()}`}
-                  {comment.anchorStart !== null && comment.anchorEnd !== null
-                    ? ` · range ${comment.anchorStart}-${comment.anchorEnd}`
-                    : ""}
-                </p>
-              </li>
-            ))
-          )}
-        </ul>
       </div>
+
+      <aside className="workspace-panel comment-panel">
+        <div className="panel-header panel-header-tight">
+          <div>
+            <p className="eyebrow">Conversation</p>
+            <h2>Comments</h2>
+          </div>
+          <p className="panel-copy">Anchor review notes to a selected text range when needed.</p>
+        </div>
+
+        <form onSubmit={handleCommentSubmit} className="stack-sm">
+          <label htmlFor="comment" className="field-label">
+            {hasRangeSelection && selection
+              ? `Selected range ${selection.start}-${selection.end}`
+              : "Comment on the full document or select text first"}
+          </label>
+          <textarea
+            id="comment"
+            value={commentBody}
+            onChange={(event) => setCommentBody(event.target.value)}
+            rows={4}
+            maxLength={1000}
+            disabled={!canComment}
+          />
+          <button
+            className="button button-primary"
+            type="submit"
+            disabled={!canComment}
+          >
+            Post Comment
+          </button>
+        </form>
+
+        {comments.length === 0 ? (
+          <div className="empty-state empty-state-compact">
+            <h3>No comments yet</h3>
+            <p>Use comments for precise review notes, open questions, and edits to revisit.</p>
+          </div>
+        ) : (
+          <ul className="comment-list">
+            {comments.map((comment) => (
+              <li key={comment.id} className="comment-card">
+                <div className="comment-card-topline">
+                  <strong>{comment.authorName ?? comment.authorEmail}</strong>
+                  <span>{new Date(comment.createdAt).toLocaleString()}</span>
+                </div>
+                <p>{comment.body}</p>
+                {comment.anchorStart !== null && comment.anchorEnd !== null ? (
+                  <p className="comment-range">
+                    Anchored to range {comment.anchorStart}-{comment.anchorEnd}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        )}
+      </aside>
     </section>
   );
 }
