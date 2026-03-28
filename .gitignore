@@ -9,3 +9,7 @@ coverage
 Library/
 data/db.json
 prisma/dev.db
+tsconfig.tsbuildinfo
+
+# Claude Code
+.claude/settings.local.json
