@@ -1,0 +1,123 @@
+.layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.editorArea {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 816px;
+  margin: 0 auto;
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border-light);
+  border-right: 1px solid var(--color-border-light);
+  min-height: 0;
+}
+
+.pageFullWidth {
+  max-width: none;
+}
+
+.splitContainer {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.splitPane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.splitDivider {
+  width: 1px;
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
+/* Title row: input + status indicator inline */
+.titleStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 600px;
+  justify-content: center;
+}
+
+/* Title input in topbar */
+.titleInput {
+  width: 100%;
+  max-width: 100%;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.titleInput:hover {
+  background: var(--color-surface-hover);
+}
+
+.titleInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+.titleInput:disabled {
+  color: var(--color-text);
+  background: transparent;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.backLink:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+@media (max-width: 900px) {
+  .splitContainer {
+    flex-direction: column;
+  }
+
+  .splitDivider {
+    width: auto;
+    height: 1px;
+  }
+
+  .page {
+    border-left: none;
+    border-right: none;
+  }
+}

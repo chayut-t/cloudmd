@@ -1,17 +1,12 @@
-import type { Metadata } from "next";
-import { JetBrains_Mono, Manrope, Space_Grotesk } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
 
-const manrope = Manrope({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body"
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-display"
 });
 
 const jetBrainsMono = JetBrains_Mono({
@@ -21,7 +16,19 @@ const jetBrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "CloudMD",
-  description: "Collaborative markdown docs"
+  description: "Collaborative markdown editor",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "CloudMD"
+  }
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  width: "device-width",
+  initialScale: 1
 };
 
 type RootLayoutProps = Readonly<{
@@ -31,9 +38,10 @@ type RootLayoutProps = Readonly<{
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body
-        className={`${manrope.variable} ${spaceGrotesk.variable} ${jetBrainsMono.variable}`}
-      >
+      <head>
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+      </head>
+      <body className={`${inter.variable} ${jetBrainsMono.variable}`}>
         {children}
       </body>
     </html>

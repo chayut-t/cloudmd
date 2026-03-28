@@ -1,0 +1,43 @@
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.icon {
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.idle { display: none; }
+
+.saving { color: var(--color-warning); }
+.saving .icon { animation: spin 1s linear infinite; }
+
+.saved { color: var(--color-success); }
+
+.error { color: var(--color-danger); }
+
+.unsaved { color: var(--color-text-secondary); }
+.unsaved .dot { background: var(--color-text-secondary); }

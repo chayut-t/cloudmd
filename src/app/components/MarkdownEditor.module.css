@@ -1,0 +1,44 @@
+.wrapper {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper :global(.cm-editor) {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+
+.wrapper :global(.cm-editor.cm-focused) {
+  outline: none;
+}
+
+.wrapper :global(.cm-scroller) {
+  overflow: auto;
+  font-family: inherit;
+}
+
+.wrapper :global(.cm-content) {
+  padding: 1.5rem 2rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.wrapper :global(.cm-gutters) {
+  display: none;
+}
+
+.wrapper :global(.cm-activeLine) {
+  background: rgba(26, 115, 232, 0.04);
+}
+
+.wrapper :global(.cm-selectionBackground) {
+  background: rgba(26, 115, 232, 0.15) !important;
+}
+
+.wrapper :global(.cm-cursor) {
+  border-left-color: var(--color-text);
+}
